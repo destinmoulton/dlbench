@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 )
 
@@ -24,6 +27,8 @@ type JSONFile struct {
 }
 
 func main() {
+	var settings JSONSections
+
 	fmt.Println("test")
 	jsonFile, err := os.Open(settingsFile)
 
@@ -32,4 +37,21 @@ func main() {
 	}
 
 	defer jsonFile.Close()
+
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	json.Unmarshal(byteValue, &settings)
+
+	for _, domain := range settings.Domains {
+		for _, file := range settings.Files {
+			var url = domain.Domain + domain.Path + file.Name
+
+			resp, err := http.Get(url)
+			if err != nil {
+				fmt.Println(err)
+			}
+			defer resp.Body.Close()
+		}
+		fmt.Println("Domain:" + domain.Domain)
+	}
 }
