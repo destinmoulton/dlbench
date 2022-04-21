@@ -159,7 +159,6 @@ func createCSVFile() (*os.File, *csv.Writer) {
 }
 
 func writeCSVRow(csvWriter *csv.Writer, row []string) {
-	fmt.Println(&csvWriter)
 	err := csvWriter.Write(row)
 	if err != nil {
 		fmt.Printf("Unable to write %v to CSV\n", row)
